@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% block title %}Регистрация — Bloger{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 500px;
+        margin: 40px auto;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .auth-header h2 {
+        font-size: 24px;
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+    .auth-header p {
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #4b5563;
+        margin-bottom: 6px;
+        letter-spacing: 0.5px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 11px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        font-size: 14px;
+        color: #111827;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+        border-color: #f59e0b;
+        outline: none;
+    }
+
+    .error-list {
+        color: #ef4444;
+        font-size: 12px;
+        margin-top: 4px;
+        list-style: none;
+    }
+
+    .auth-btn {
+        width: 100%;
+        padding: 12px;
+        font-weight: bold;
+        margin-top: 15px;
+        background: #111827;
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .auth-btn:hover {
+        background: #1f2937;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 25px;
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    .auth-footer a {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-header">
+        <h2>Создание аккаунта</h2>
+        <p>Заполните форму ниже, чтобы зарегистрироваться в системе.</p>
+    </div>
+
+    <form method="POST" action="{% url 'register' %}">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">Email адрес</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div class="error-list">{{ form.email.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.first_name.id_for_label }}">Имя</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+                <div class="error-list">{{ form.first_name.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.last_name.id_for_label }}">Фамилия</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+                <div class="error-list">{{ form.last_name.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_password1">Пароль</label>
+            <input type="password" id="id_password1" name="password1" placeholder="••••••••" required>
+            {% if form.password1.errors %}
+                <div class="error-list">{{ form.password1.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_password2">Подтвердите пароль</label>
+            <input type="password" id="id_password2" name="password2" placeholder="••••••••" required>
+            {% if form.password2.errors %}
+                <div class="error-list">{{ form.password2.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="auth-btn">Зарегистрироваться</button>
+    </form>
+
+    <div class="auth-footer">
+        Уже зарегистрированы? <a href="{% url 'login' %}">Войти</a>
+    </div>
+</div>
+{% endblock %}

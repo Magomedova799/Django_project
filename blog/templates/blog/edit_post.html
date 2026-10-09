@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Редактировать — {{ post.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 20px auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 24px; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+    <div style="margin-bottom: 25px; border-bottom: 1px solid #f3f4f6; padding-bottom: 15px;">
+        <h2 style="font-size: 22px; font-weight: bold; color: #111827;">Редактирование статьи</h2>
+        <p style="font-size: 14px; color: #6b7280;">Внесите изменения в поля формы ниже</p>
+    </div>
+
+    <form method="POST" action="{% url 'edit_post' post.pk %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-size: 11px; font-weight: bold; text-transform: uppercase; color: #4b5563; margin-bottom: 6px;">Заголовок</label>
+            {{ form.title }}
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-size: 11px; font-weight: bold; text-transform: uppercase; color: #4b5563; margin-bottom: 6px;">Текст записи</label>
+            {{ form.description }}
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 11px; font-weight: bold; text-transform: uppercase; color: #4b5563; margin-bottom: 6px;">Обложка</label>
+            {{ form.image }}
+        </div>
+
+        <button type="submit" class="btn" style="background: #2563eb;">Сохранить изменения</button>
+        <a href="{% url 'post_detail' post.pk %}" class="btn" style="background: #6b7280; margin-left: 10px;">Отмена</a>
+    </form>
+</div>
+{% endblock %}

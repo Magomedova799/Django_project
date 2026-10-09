@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}Профиль пользователя — Bloger{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container { max-width: 800px; margin: 20px auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 24px; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+    .profile-header { display: flex; align-items: center; gap: 25px; border-bottom: 1px solid #f3f4f6; padding-bottom: 30px; margin-bottom: 30px; }
+    .profile-avatar { width: 90px; height: 90px; border-radius: 50%; background-color: #f3f4f6; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid #e5e7eb; }
+    .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-title h2 { font-size: 22px; font-weight: bold; color: #111827; margin-bottom: 4px; }
+    .profile-title p { font-size: 14px; color: #6b7280; }
+    
+    .info-group { margin-bottom: 20px; }
+    .info-label { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #9ca3af; letter-spacing: 0.5px; margin-bottom: 5px; }
+    .info-value { font-size: 15px; color: #374151; line-height: 1.5; }
+    .token-box { background-color: #f9fafb; border: 1px dashed #d1d5db; padding: 12px 15px; border-radius: 8px; font-family: monospace; font-size: 13px; color: #111827; margin-top: 5px; word-break: break-all; }
+
+    /* Сетка для статей пользователя */
+    .user-posts-section { margin-top: 40px; border-top: 1px solid #f3f4f6; padding-top: 30px; }
+    .posts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
+    .mini-card { border: 1px solid #e5e7eb; border-radius: 16px; padding: 15px; background: #ffffff; display: flex; flex-direction: column; justify-content: space-between; height: 140px; }
+    .mini-card h4 a { font-size: 16px; color: #111827; text-decoration: none; font-weight: bold; }
+    .mini-card h4 a:hover { color: #f59e0b; }
+    .mini-card-meta { font-size: 12px; color: #9ca3af; margin-top: 5px; }
+    .status-badge { display: inline-block; font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 10px; margin-top: 8px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="{{ user.first_name }}">
+            {% else %}
+                <span style="font-size: 32px; color: #9ca3af;">👤</span>
+            {% endif %}
+        </div>
+        <div class="profile-title">
+            <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+            <p>{{ user.email }}</p>
+
+            <div style="display: flex; gap: 20px; margin-top: 15px; font-size: 14px; color: #4b5563;">
+                <div>Статей: <b style="color: #111827;">{{ user.posts.count }}</b></div>
+                <div>Подписчиков: <b style="color: #111827;">{{ user.follower_subscriptions.count }}</b></div>
+                <div>Подписок: <b style="color: #111827;">{{ user.following_subscriptions.count }}</b></div>
+            </div>
+
+            {% if user.specialization %}
+        <div class="info-group">
+            <div class="info-label">Специализация</div>
+            <div class="info-value">{{ user.specialization }}</div>
+        </div>
+    {% endif %}
+
+    {% if user.bio %}
+        <div class="info-group">
+            <div class="info-label">О себе</div>
+            <div class="info-value" style="white-space: pre-line;">{{ user.bio }}</div>
+        </div>
+    {% endif %}
+        </div>
+        </div>
+            <div style="margin-top: 20px;">
+        <a href="{% url 'edit_profile' %}" class="btn" style="background: #2563eb;">Редактировать профиль</a>
+    </div>
+    </div>
+
+    
+    <div class="user-posts-section">
+        <h3 style="font-size: 18px; font-weight: bold; color: #111827;">Мои публикации ({{ user.posts.count }})</h3>
+        
+        <div class="posts-grid">
+            {% for post in user.posts.all %}
+                <div class="mini-card">
+                    <div>
+                        <h4><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h4>
+                        <div class="mini-card-meta">Дата создания: {{ post.date }}</div>
+                    </div>
+                
+                    <div>
+                        {% if post.is_published %}
+                            <span class="status-badge" style="background: #d1fae5; color: #065f46;">Опубликовано</span>
+                        {% else %}
+                            <span class="status-badge" style="background: #fee2e2; color: #991b1b;">Снято с публикации</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <p style="color: #9ca3af; grid-column: 1/-1; font-style: italic;">Вы еще не написали ни одной статьи.</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="user-posts-section" style="margin-top: 40px; border-top: 1px solid #f3f4f6; padding-top: 30px;">
+        <h3 style="font-size: 18px; font-weight: bold; color: #111827;">Понравившиеся публикации</h3>
+        
+        <div class="posts-grid">
+            {% for like in user.like_set.all %}
+                <div class="mini-card" style="height: 110px;">
+                    <div>
+                        <h4><a href="{% url 'post_detail' like.post.pk %}">{{ like.post.title }}</a></h4>
+                        <div class="mini-card-meta">Автор: {{ like.post.author }}</div>
+                    </div>
+                </div>
+            {% empty %}
+                <p style="color: #9ca3af; grid-column: 1/-1; font-style: italic;">Вы еще не поставили ни одного лайка.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}

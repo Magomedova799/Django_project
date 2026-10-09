@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Написать статью — Bloger{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 20px auto;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .form-header {
+        margin-bottom: 25px;
+        border-bottom: 1px solid #f3f4f6;
+        padding-bottom: 15px;
+    }
+    .form-label {
+        display: block;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #4b5563;
+        margin-bottom: 6px;
+        letter-spacing: 0.5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h2 style="font-size: 22px; font-weight: bold; color: #111827;">Написать новую статью</h2>
+        <p style="font-size: 14px; color: #6b7280;">Поделитесь своими мыслями с читателями</p>
+    </div>
+
+    <form method="POST" action="{% url 'create_post' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div style="margin-bottom: 15px;">
+            <label class="form-label">Заголовок статьи</label>
+            {{ form.title }}
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label class="form-label">Содержимое (Текст записи)</label>
+            {{ form.description }}
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label class="form-label">Выберите теги (Зажмите Ctrl для выбора нескольких)</label>
+            {{ form.tags }}
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label class="form-label">Обложка статьи</label>
+            {{ form.image }}
+        </div>
+
+        <button type="submit" class="btn">Опубликовать статью</button>
+    </form>
+</div>
+{% endblock %}

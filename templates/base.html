@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Bloger{% endblock %}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f9fafb;
+            color: #1f2937;
+            display: flex;
+            min-height: 100vh;
+        }
+        /* Сайдбар */
+        aside {
+            width: 260px;
+            border-right: 1px solid #e5e7eb;
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            height: 100vh;
+            background-color: #ffffff;
+        }
+        .logo { font-size: 26px; font-weight: bold; color: #111827; margin-bottom: 40px; font-family: Georgia, serif; }
+        .logo span { color: #f59e0b; }
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li { margin-bottom: 22px; }
+        .sidebar-menu li a { font-size: 14px; color: #4b5563; text-decoration: none; font-weight: 500; }
+        .sidebar-menu li a:hover { color: #f59e0b; }
+        .section-title { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #9ca3af; margin-top: 40px; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .circle-dot { width: 24px; height: 24px; background-color: #e5e7eb; border-radius: 50%; }
+        
+        
+        main { flex: 1; margin-left: 260px; padding: 40px 60px; }
+        
+        
+        .btn { display: inline-block; padding: 10px 20px; background: #111827; color: #fff; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; font-size: 14px; text-align: center; }
+        .btn:hover { background: #1f2937; }
+        .messages { margin-bottom: 20px; list-style: none; padding: 10px; background: #fef3c7; border-radius: 6px; color: #92400e; font-size: 13px; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <aside>
+        <div>
+            <div class="logo">Blog<span>er</span></div>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'home' %}">Главная</a></li>
+                <li><a href="{% url 'profile' %}">Мой аккаунт</a></li>
+                <li><a href="{% url 'create_post' %}">написать статью</a></li>
+            </ul>
+            <div class="section-title">Подписки</div>
+            <div class="circle-dot"></div>
+        </div>
+        <div>
+            <ul class="sidebar-menu">
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}" style="color: #ef4444;">Выйти из аккаунта</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Войти</a></li>
+                    <li><a href="{% url 'register' %}">Регистрация</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </aside>
+
+    <main>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+        <aside>
+        <div>
+            <div class="logo">Blog<span>er</span></div>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'home' %}">Главная</a></li>
+                <li><a href="{% url 'author_list' %}">Найти авторов</a></li>
+                <li><a href="{% url 'profile' %}">Мой аккаунт</a></li>
+                <li><a href="{% url 'liked_posts' %}">Лайки</a></li> 
+                <li><a href="{% url 'create_post' %}">написать статью</a></li>
+            </ul>
+
+
+            <div class="section-title">подписки</div>
+<div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px; position: relative; z-index: 9999;">
+    {% if user.is_authenticated %}
+        {% for sub in user.following_subscriptions.all %}
+            
+            <!-- Используем onclick для мгновенного принудительного перехода средствами браузера -->
+            <div onclick="window.location.href='/accounts/user/{{ sub.author.id }}/';" 
+                 style="display: flex !important; align-items: center !important; gap: 10px !important; color: inherit !important; cursor: pointer !important; position: relative !important; z-index: 99999 !important;"
+                 title="Перейти в профиль {{ sub.author.first_name }}">
+                
+                <!-- Круглая аватарка автора -->
+                <div class="circle-dot" style="overflow: hidden; background-color: #d1d5db; width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    {% if sub.author.avatar %}
+                        <img src="{{ sub.author.avatar.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                        <span style="font-size: 14px; color: #4b5563;">👤</span>
+                    {% endif %}
+                </div>
+                
+                <!-- Текстовый блок автора -->
+                <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                    <span style="font-size: 13px; font-weight: bold; color: #111827;">
+                        {{ sub.author.first_name|default:"Автор" }} {{ sub.author.last_name }}
+                    </span>
+                    <span style="font-size: 11px; color: #6b7280;">
+                        {{ sub.author.email }}
+                    </span>
+                </div>
+                
+            </div>
+            
+        {% empty %}
+            <p style="font-size: 11px; color: #9ca3af; text-transform: none;">Нет подписок</p>
+        {% endfor %}
+    {% else %}
+        <div class="circle-dot"></div>
+    {% endif %}
+</div>
+
+
+
+        </div>
+        <div>
+            <ul class="sidebar-menu">
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}" style="color: #ef4444;">Выйти из аккаунта</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Войти</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </aside>
+
+
+</body>
+</html>

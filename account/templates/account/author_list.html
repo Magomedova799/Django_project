@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <h2 style="margin-bottom: 20px;">Поиск авторов блога</h2>
+    <form method="GET" action="{% url 'author_list' %}" style="margin-bottom: 30px; display: flex; gap: 10px;">
+        <input type="text" name="user_search" value="{{ search_query }}" placeholder="Введите имя или email..." style="flex: 1; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+        <button type="submit" class="btn">Найти</button>
+    </form>
+    <div style="background: #fff; padding: 20px; border-radius: 16px; border: 1px solid #e5e7eb;">
+        {% for author in authors %}
+            {% if author != user %}
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f3f4f6;">
+                <div><b>{{ author.first_name }} {{ author.last_name }}</b> ({{ author.email }})</div>
+                <form method="POST" action="{% url 'toggle_subscribe' author.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn" style="padding: 6px 12px; font-size: 12px; background: #2563eb;">Подписаться/Отписаться</button>
+                </form>
+            </div>
+            {% endif %}
+        {% empty %}
+            <p style="color: #9ca3af;">Пользователи не найдены.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
